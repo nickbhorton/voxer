@@ -3,6 +3,7 @@
 #include "buffer.h"
 #include "shader.h"
 #include "vao.h"
+#include "voxel_parser.h"
 #include "window.h"
 
 #include <glm/ext/matrix_clip_space.hpp>
@@ -61,12 +62,22 @@ int main()
          {"res/shaders/basic.frag.glsl", GL_FRAGMENT_SHADER}}
     };
 
+    auto const [obj_positions, obj_palette] = parse_vox_file("res/teapot.vox");
     std::vector<std::array<float, 3>> position_v{};
     std::vector<std::array<float, 3>> color_v{};
-    add_cube(position_v, color_v, {0, 0, 0}, {0, 0, 0});
-    add_cube(position_v, color_v, {1, 0, 0}, {1, 0, 0});
-    add_cube(position_v, color_v, {1, 1, 0}, {1, 1, 0});
-    add_cube(position_v, color_v, {0, 1, 1}, {0, 1, 1});
+    for (auto const& p : obj_positions) {
+        std::array<float, 3> position{
+            static_cast<float>(p[0]),
+            static_cast<float>(p[2]),
+            static_cast<float>(p[1])
+        };
+        std::array<float, 3> color{
+            static_cast<float>(obj_palette[p[3]][0]) / 255.0f,
+            static_cast<float>(obj_palette[p[3]][1]) / 255.0f,
+            static_cast<float>(obj_palette[p[3]][2]) / 255.0f
+        };
+        add_cube(position_v, color_v, position, color);
+    }
 
     StaticBuffer position_b{position_v, GL_ARRAY_BUFFER};
     StaticBuffer color_b{color_v, GL_ARRAY_BUFFER};

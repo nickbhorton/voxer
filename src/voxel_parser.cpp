@@ -79,14 +79,17 @@ void read_chunk(std::ifstream& file_stream, Chunk& chunk, const char* header)
               << "\n";
 }
 
-void parse_vox_file(std::string const& file_name)
+std::tuple<
+    std::vector<std::array<int8_t, 4>>,
+    std::array<std::array<uint8_t, 4>, 256>>
+parse_vox_file(std::string const& file_name)
 {
     std::ifstream file_stream{
         file_name,
         std::ios_base::binary | std::ios_base::in
     };
     if (!file_stream.is_open()) {
-        return;
+        assert(1 == 0);
     }
     std::cout << "parsing " << file_name << "\n";
 
@@ -159,8 +162,11 @@ void parse_vox_file(std::string const& file_name)
     }
     assert(file_stream.get() == -1);
     file_stream.close();
+
+    return {voxels, palette};
 }
 
+/*
 int main(int argc, char** argv)
 {
     if (argc < 2) {
@@ -174,3 +180,4 @@ int main(int argc, char** argv)
         parse_vox_file(file_name);
     }
 }
+*/

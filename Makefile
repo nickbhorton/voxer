@@ -1,18 +1,18 @@
 CXX = g++
 CXXFLAGS = -Wall -Werror -g3 -Isrc -Ideps/glad/include
 
-all: vp render
+all: render
 
-vp: src/voxel_parser.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
-
-render: src/renderer.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o
+render: src/renderer.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
 
 window.o: src/window.cpp src/window.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 buffer.o: src/buffer.cpp src/buffer.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+voxel_parser.o: src/voxel_parser.cpp src/voxel_parser.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 vao.o: src/vao.cpp src/vao.h
@@ -29,7 +29,6 @@ glad.o: deps/glad/src/gl.c
 
 
 clean:
-	rm -f vp
 	rm -f render 
 	rm *.o
 
