@@ -1,0 +1,8 @@
+*.o
+vp
+render
+
+.clang-format
+compile_commands.json
+deps/
+.cache/
