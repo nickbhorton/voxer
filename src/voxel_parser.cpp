@@ -80,7 +80,7 @@ void read_chunk(std::ifstream& file_stream, Chunk& chunk, const char* header)
 }
 
 std::tuple<
-    std::vector<std::array<int8_t, 4>>,
+    std::vector<std::array<uint8_t, 4>>,
     std::array<std::array<uint8_t, 4>, 256>>
 parse_vox_file(std::string const& file_name)
 {
@@ -130,7 +130,7 @@ parse_vox_file(std::string const& file_name)
         sizeof(number_voxels)
     );
     std::cout << "XYZI voxels: " << number_voxels << "\n";
-    std::vector<std::array<int8_t, 4>> voxels(number_voxels, {0, 0, 0, 0});
+    std::vector<std::array<uint8_t, 4>> voxels(number_voxels, {0, 0, 0, 0});
     for (int32_t i = 0; i < number_voxels; i++) {
         for (size_t j = 0; j < 4; j++) {
             file_stream.read(
@@ -139,9 +139,10 @@ parse_vox_file(std::string const& file_name)
             );
         }
         if (i > number_voxels - 4 || i < 5) {
-            std::cout << "(" << (int)voxels[i][0] << ", " << (int)voxels[i][1]
-                      << ", " << (int)voxels[i][2] << ", " << (int)voxels[i][3]
-                      << ")\n";
+            std::cout << "(" << (unsigned int)voxels[i][0] << ", "
+                      << (unsigned int)voxels[i][1] << ", "
+                      << (unsigned int)voxels[i][2] << ", "
+                      << (unsigned int)voxels[i][3] << ")\n";
         }
     }
     std::array<std::array<uint8_t, 4>, 256> palette;
@@ -154,8 +155,8 @@ parse_vox_file(std::string const& file_name)
         for (int i = 0; i < 256; i++) {
             for (int j = 0; j < 4; j++) {
                 file_stream.read(
-                    reinterpret_cast<char*>(&palette[i][3 - j]),
-                    sizeof(palette[i][3 - j])
+                    reinterpret_cast<char*>(&palette[i][j]),
+                    sizeof(palette[i][j])
                 );
             }
         }

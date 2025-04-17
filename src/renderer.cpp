@@ -62,7 +62,8 @@ int main()
          {"res/shaders/basic.frag.glsl", GL_FRAGMENT_SHADER}}
     };
 
-    auto const [obj_positions, obj_palette] = parse_vox_file("res/teapot.vox");
+    auto const [obj_positions, obj_palette] =
+        parse_vox_file("res/chr_butcher.vox");
     std::vector<std::array<float, 3>> position_v{};
     std::vector<std::array<float, 3>> color_v{};
     for (auto const& p : obj_positions) {
