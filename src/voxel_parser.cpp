@@ -7,6 +7,9 @@
 #include <string>
 #include <vector>
 
+bool constexpr debug_print = false;
+
+// unused because I am lazy lowkey
 unsigned int default_palette[256] = {
     0x00000000, 0xffffffff, 0xffccffff, 0xff99ffff, 0xff66ffff, 0xff33ffff,
     0xff00ffff, 0xffffccff, 0xffccccff, 0xff99ccff, 0xff66ccff, 0xff33ccff,
@@ -67,16 +70,19 @@ void read_chunk(std::ifstream& file_stream, Chunk& chunk, const char* header)
         reinterpret_cast<char*>(&chunk.chunk_content_count),
         sizeof(chunk.chunk_content_count)
     );
-    std::cout << header
-              << ": num bytes of chunk content: " << chunk.chunk_content_count
-              << "\n";
+
+    if (debug_print) {
+        std::cout << header << ": num bytes of chunk content: "
+                  << chunk.chunk_content_count << "\n";
+    }
     file_stream.read(
         reinterpret_cast<char*>(&chunk.child_content_count),
         sizeof(chunk.child_content_count)
     );
-    std::cout << header
-              << ": num bytes of children chunks: " << chunk.child_content_count
-              << "\n";
+    if (debug_print) {
+        std::cout << header << ": num bytes of children chunks: "
+                  << chunk.child_content_count << "\n";
+    }
 }
 
 std::tuple<
@@ -91,7 +97,9 @@ parse_vox_file(std::string const& file_name)
     if (!file_stream.is_open()) {
         assert(1 == 0);
     }
-    std::cout << "parsing " << file_name << "\n";
+    if (debug_print) {
+        std::cout << "parsing " << file_name << "\n";
+    }
 
     char chunk_id[4];
 
@@ -100,7 +108,9 @@ parse_vox_file(std::string const& file_name)
     assert(strncmp(chunk_id, "VOX ", 4) == 0);
     int32_t version{};
     file_stream.read(reinterpret_cast<char*>(&version), sizeof(version));
-    std::cout << "vox version: " << version << "\n";
+    if (debug_print) {
+        std::cout << "vox version: " << version << "\n";
+    }
 
     // MAIN chunk
     Chunk main{};
@@ -119,8 +129,10 @@ parse_vox_file(std::string const& file_name)
             sizeof(size_data[i])
         );
     }
-    std::cout << "SIZE data: " << size_data[0] << ", " << size_data[1] << ", "
-              << size_data[2] << "\n";
+    if (debug_print) {
+        std::cout << "SIZE data: " << size_data[0] << ", " << size_data[1]
+                  << ", " << size_data[2] << "\n";
+    }
     Chunk xyzi{};
     read_chunk(file_stream, xyzi, "XYZI");
 
@@ -129,7 +141,11 @@ parse_vox_file(std::string const& file_name)
         reinterpret_cast<char*>(&number_voxels),
         sizeof(number_voxels)
     );
-    std::cout << "XYZI voxels: " << number_voxels << "\n";
+    if (debug_print) {
+        std::cout << "XYZI voxels: " << number_voxels << "\n";
+    } else {
+        std::cout << "voxels count " << number_voxels << "\n";
+    }
     std::vector<std::array<uint8_t, 4>> voxels(number_voxels, {0, 0, 0, 0});
     for (int32_t i = 0; i < number_voxels; i++) {
         for (size_t j = 0; j < 4; j++) {
@@ -138,11 +154,13 @@ parse_vox_file(std::string const& file_name)
                 sizeof(voxels[i][j])
             );
         }
-        if (i > number_voxels - 4 || i < 5) {
-            std::cout << "(" << (unsigned int)voxels[i][0] << ", "
-                      << (unsigned int)voxels[i][1] << ", "
-                      << (unsigned int)voxels[i][2] << ", "
-                      << (unsigned int)voxels[i][3] << ")\n";
+        if (debug_print) {
+            if (i > number_voxels - 4 || i < 5) {
+                std::cout << "(" << (unsigned int)voxels[i][0] << ", "
+                          << (unsigned int)voxels[i][1] << ", "
+                          << (unsigned int)voxels[i][2] << ", "
+                          << (unsigned int)voxels[i][3] << ")\n";
+            }
         }
     }
     std::array<std::array<uint8_t, 4>, 256> palette;
@@ -163,7 +181,6 @@ parse_vox_file(std::string const& file_name)
     }
     assert(file_stream.get() == -1);
     file_stream.close();
-
     return {voxels, palette};
 }
 
