@@ -21,7 +21,7 @@ bool Window::first_mouse_update = true;
 // camera static varaibles
 float Window::yaw = 90;
 float Window::pitch = 0;
-glm::vec3 Window::camera_position = glm::vec3(0.0, 0.0, -1.5);
+glm::vec3 Window::camera_position = glm::vec3(256.0, 256.0, -650.0);
 glm::vec3 Window::camera_up = glm::vec3(0.0, 1.0, 0.0);
 glm::vec3 Window::camera_direction = glm::vec3(
     std::cos(glm::radians(Window::yaw)) * std::cos(glm::radians(Window::pitch)),
@@ -45,10 +45,7 @@ Window::Window()
     glfwSetErrorCallback(Window::glfw_error_callback);
 
     glfwSetKeyCallback(Window::glfw_window, Window::glfw_key_callback);
-    glfwSetFramebufferSizeCallback(
-        Window::glfw_window,
-        Window::glfw_window_resize_callback
-    );
+    glfwSetFramebufferSizeCallback(Window::glfw_window, Window::glfw_window_resize_callback);
     glfwSetCursorPosCallback(Window::glfw_window, Window::glfw_mouse_callback);
 
     glEnable(GL_DEPTH_TEST);
@@ -119,22 +116,14 @@ void Window::glfw_key_callback(
     }
 }
 
-void Window::glfw_window_resize_callback(
-    [[maybe_unused]] GLFWwindow* window,
-    int new_width,
-    int new_height
-)
+void Window::glfw_window_resize_callback([[maybe_unused]] GLFWwindow* window, int new_width, int new_height)
 {
     width = new_width;
     height = new_height;
     glViewport(0, 0, new_width, new_height);
 }
 
-void Window::glfw_mouse_callback(
-    [[maybe_unused]] GLFWwindow* window,
-    double xpos,
-    double ypos
-)
+void Window::glfw_mouse_callback([[maybe_unused]] GLFWwindow* window, double xpos, double ypos)
 {
     if (first_mouse_update) {
         mouse_last_x = static_cast<int>(xpos);
@@ -168,26 +157,18 @@ void camera_update_per_frame(GLFWwindow* window)
     const float camera_speed = 0.25f;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        Window::camera_position +=
-            camera_speed * glm::normalize(Window::camera_direction);
+        Window::camera_position += camera_speed * glm::normalize(Window::camera_direction);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        Window::camera_position -=
-            camera_speed * glm::normalize(Window::camera_direction);
+        Window::camera_position -= camera_speed * glm::normalize(Window::camera_direction);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         Window::camera_position -=
-            glm::normalize(
-                glm::cross(Window::camera_direction, Window::camera_up)
-            ) *
-            camera_speed;
+            glm::normalize(glm::cross(Window::camera_direction, Window::camera_up)) * camera_speed;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         Window::camera_position +=
-            glm::normalize(
-                glm::cross(Window::camera_direction, Window::camera_up)
-            ) *
-            camera_speed;
+            glm::normalize(glm::cross(Window::camera_direction, Window::camera_up)) * camera_speed;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         Window::camera_position += Window::camera_up * camera_speed;
@@ -195,11 +176,9 @@ void camera_update_per_frame(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         Window::camera_position -= Window::camera_up * camera_speed;
     }
-    Window::camera_direction.x = std::cos(glm::radians(Window::yaw)) *
-                                 std::cos(glm::radians(Window::pitch));
+    Window::camera_direction.x = std::cos(glm::radians(Window::yaw)) * std::cos(glm::radians(Window::pitch));
     Window::camera_direction.y = sin(glm::radians(Window::pitch));
-    Window::camera_direction.z = std::sin(glm::radians(Window::yaw)) *
-                                 std::cos(glm::radians(Window::pitch));
+    Window::camera_direction.z = std::sin(glm::radians(Window::yaw)) * std::cos(glm::radians(Window::pitch));
     Window::view = glm::lookAt(
         Window::camera_position,
         Window::camera_position + glm::normalize(Window::camera_direction),
