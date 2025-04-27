@@ -154,7 +154,7 @@ void Window::glfw_mouse_callback([[maybe_unused]] GLFWwindow* window, double xpo
 
 void camera_update_per_frame(GLFWwindow* window)
 {
-    const float camera_speed = 0.25f;
+    const float camera_speed = 5.00f;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         Window::camera_position += camera_speed * glm::normalize(Window::camera_direction);

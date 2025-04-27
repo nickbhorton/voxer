@@ -1,9 +1,9 @@
-CXX = g++
-CXXFLAGS = -Wall -Werror -g3 -Isrc -Ideps/glad/include
+eXX = g++
+CXXFLAGS = -Wall -Werror -O3 -Isrc -Ideps/glad/include
 
-all: render
+all: render1
 
-render: src/renderer.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
+render1: src/renderer1.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
 
 window.o: src/window.cpp src/window.h
@@ -29,7 +29,7 @@ glad.o: deps/glad/src/gl.c
 
 
 clean:
-	rm -f render 
+	rm -f render1
 	rm *.o
 
 .PHONY:

@@ -56,32 +56,35 @@ int main(int argc, char** argv)
 
     Window window{};
     ShaderProgram basic_s{
-        {{"res/shaders/basic.vert.glsl", GL_VERTEX_SHADER}, {"res/shaders/basic.frag.glsl", GL_FRAGMENT_SHADER}}
+        {{"res/shaders/1.vert.glsl", GL_VERTEX_SHADER}, {"res/shaders/1.frag.glsl", GL_FRAGMENT_SHADER}}
     };
 
-    float const x_offset = 128.0f;
-    float const y_offset = 128.0f;
+    float const x_offset = 256.0f;
+    float const y_offset = 256.0f;
+    float const z_offset = 256.0f;
     std::vector<std::array<float, 3>> position_v{};
     std::vector<std::array<float, 3>> color_v{};
-    for (size_t y = 0; y < 4; y++) {
-        for (size_t x = 0; x < 4; x++) {
-            for (auto const& p : obj_positions) {
-                std::array<float, 3> position{
-                    static_cast<float>(p[0]) + static_cast<float>(x) * x_offset,
-                    static_cast<float>(p[2]) + static_cast<float>(y) * y_offset,
-                    static_cast<float>(p[1])
-                };
-                std::array<float, 3> color{
-                    static_cast<float>(obj_palette[p[3]][0]) / 255.0f,
-                    static_cast<float>(obj_palette[p[3]][1]) / 255.0f,
-                    static_cast<float>(obj_palette[p[3]][2]) / 255.0f
-                };
-                add_cube(position_v, color_v, position, color);
+    for (size_t z = 0; z < 1; z++) {
+        for (size_t y = 0; y < 4; y++) {
+            for (size_t x = 0; x < 4; x++) {
+                for (auto const& p : obj_positions) {
+                    std::array<float, 3> position{
+                        static_cast<float>(p[0]) + static_cast<float>(x) * x_offset,
+                        static_cast<float>(p[2]) + static_cast<float>(y) * y_offset,
+                        static_cast<float>(p[1]) + static_cast<float>(z) * z_offset,
+                    };
+                    std::array<float, 3> color{
+                        static_cast<float>(obj_palette[p[3]][0]) / 255.0f,
+                        static_cast<float>(obj_palette[p[3]][1]) / 255.0f,
+                        static_cast<float>(obj_palette[p[3]][2]) / 255.0f
+                    };
+                    add_cube(position_v, color_v, position, color);
+                }
             }
         }
     }
 
-    std::cout << "voxel count: " << position_v.size() << "\n";
+    std::cout << "voxel count: " << position_v.size() / 36 << "\n";
     int64_t bytes{};
     bytes += position_v.size() * sizeof(position_v[0]);
     bytes += color_v.size() * sizeof(color_v[0]);
@@ -95,7 +98,10 @@ int main(int argc, char** argv)
     vao.attach_buffer_object("v_position", position_b);
     vao.attach_buffer_object("v_color", color_b);
 
+    int frame_count = 0;
+    double total_time = 0.0;
     while (!glfwWindowShouldClose(window.get_glfw_window())) {
+        double t1 = glfwGetTime();
         glfwPollEvents();
         if (Window::mouse_capture) {
             camera_update_per_frame(window.get_glfw_window());
@@ -112,5 +118,9 @@ int main(int argc, char** argv)
 
         // swap buffers
         glfwSwapBuffers(window.get_glfw_window());
+        double t2 = glfwGetTime();
+        frame_count++;
+        total_time += (t2 - t1);
     }
+    std::cout << "FPS over " << frame_count << " frames: " << frame_count / total_time << "\n";
 }

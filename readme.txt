@@ -1,22 +1,14 @@
-I found some random open source voxel format used for some decade old game.
-All this program does is parse this file format and renders the voxels in the
-least efficient way. All art assets are taken from said open source project (I
-am not an artist)
+scene:
+    3,688,048 voxels
 
-Usage:
-./render                  # will render teapot example
-./render res/butcher.vox  # renders a cute character butcher
-./render res/dragon.vox   # renders the classic dragon 
-./render res/monu1.vox    # renders a cool building? 
+render1:
+    6.75 fps over 90 frames
+    6.63 fps over 1002 frames
 
-Links:
-https://github.com/ephtracy/voxel-model/ -> the voxel file format and art assets
+    44,256,576 triangles
+    132,769,728 vertexes
+    at 6 floats per vertex
+    at 4 bytes per float
+        2.96763 Gb of geometry data
 
-Todo:
-Better lighting and rendering abstraction -> imgui probably
-    By rendering abstraction I mean a better interface to switch between
-    optimization levels.
-The real meat of the project: optimization progression implementations
-    Somewhere between 5 and 10 different optimization levels -> imgui to
-    switch between maybe.
-Some summary document of what I found with the voxel optimizations
+    1 draw call per frame
