@@ -21,7 +21,7 @@ bool Window::first_mouse_update = true;
 // camera static varaibles
 float Window::yaw = 90;
 float Window::pitch = 0;
-glm::vec3 Window::camera_position = glm::vec3(256.0, 256.0, -650.0);
+glm::vec3 Window::camera_position = glm::vec3(500.0, 500.0, -800.0);
 glm::vec3 Window::camera_up = glm::vec3(0.0, 1.0, 0.0);
 glm::vec3 Window::camera_direction = glm::vec3(
     std::cos(glm::radians(Window::yaw)) * std::cos(glm::radians(Window::pitch)),
@@ -37,7 +37,7 @@ glm::mat4 Window::proj = glm::perspective(
     glm::radians(45.0f),
     static_cast<float>(Window::width) / static_cast<float>(Window::height),
     0.1f,
-    1000.0f
+    10000.0f
 );
 
 Window::Window()
@@ -52,6 +52,9 @@ Window::Window()
     // glEnable(GL_CULL_FACE);
     // glFrontFace(GL_CCW);
     // glCullFace(GL_BACK);
+
+    // turn off vsync
+    glfwSwapInterval(0);
 
     glViewport(0, 0, Window::width, Window::height);
 
@@ -154,7 +157,7 @@ void Window::glfw_mouse_callback([[maybe_unused]] GLFWwindow* window, double xpo
 
 void camera_update_per_frame(GLFWwindow* window)
 {
-    const float camera_speed = 5.00f;
+    const float camera_speed = 5.25f;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         Window::camera_position += camera_speed * glm::normalize(Window::camera_direction);

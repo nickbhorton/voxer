@@ -2,6 +2,7 @@
 
 #include <glad/gl.h>
 
+#include <array>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float4.hpp>
 #include <iostream>
@@ -41,8 +42,9 @@ public:
 
     ~ShaderProgram();
 
-    template <typename T>
-    void update_uniform(std::string const& uniform_name, T new_value);
+    template <typename T> void update_uniform(std::string const& uniform_name, T new_value);
+    template <typename T, size_t N>
+    void update_uniform_array(std::string const& uniform_name, std::array<T, N> const& array);
 
     auto get_name() const -> GLuint;
 
@@ -58,44 +60,20 @@ private:
     void link();
 };
 
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    float new_val
-);
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    int new_val
-);
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::mat4 new_val
-);
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::vec2 new_val
-);
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::vec3 new_val
-);
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::vec4 new_val
-);
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    GLuint new_val
-);
-template <typename T>
-void ShaderProgram::update_uniform(std::string const& uniform_name, T new_value)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, float new_val);
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, int new_val);
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::mat4 new_val);
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::vec2 new_val);
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::vec3 new_val);
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::vec4 new_val);
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, GLuint new_val);
+template <typename T> void ShaderProgram::update_uniform(std::string const& uniform_name, T new_value)
 {
-    std::cerr << "ShaderProgram uniform type for " << uniform_name
-              << " not implemented\n";
+    std::cerr << "ShaderProgram uniform type for " << uniform_name << " not implemented\n";
 }
+
+template <>
+void ShaderProgram::update_uniform_array(
+    std::string const& uniform_name,
+    std::array<std::array<float, 4>, 256> const& val
+);

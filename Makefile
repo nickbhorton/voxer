@@ -1,9 +1,24 @@
 eXX = g++
 CXXFLAGS = -Wall -Werror -O3 -Isrc -Ideps/glad/include
 
-all: render1
+all: render1 render2 render3 render4 render5 render6
 
 render1: src/renderer1.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
+
+render2: src/renderer2.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
+
+render3: src/renderer3.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
+
+render4: src/renderer4.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
+
+render5: src/renderer5.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
+
+render6: src/renderer6.cpp window.o glad.o buffer.o shader_program.o shader_object.o vao.o voxel_parser.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -lglfw
 
 window.o: src/window.cpp src/window.h

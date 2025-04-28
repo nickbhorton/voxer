@@ -8,19 +8,11 @@ static void report_program_info_log(GLuint name, std::string const& msg)
     GLsizei info_log_length{};
     glGetProgramiv(name, GL_INFO_LOG_LENGTH, &info_log_length);
     std::string error_log("\0", info_log_length);
-    glGetProgramInfoLog(
-        name,
-        info_log_length,
-        &info_log_length,
-        error_log.data()
-    );
-    std::cerr << "shader_program_info_log" << msg << std::string(": ")
-              << error_log << std::endl;
+    glGetProgramInfoLog(name, info_log_length, &info_log_length, error_log.data());
+    std::cerr << "shader_program_info_log" << msg << std::string(": ") << error_log << std::endl;
 }
 
-ShaderProgram::ShaderProgram(std::vector<std::pair<std::string, GLenum>> shaders
-)
-    : name{}, moved{false}, sos{}
+ShaderProgram::ShaderProgram(std::vector<std::pair<std::string, GLenum>> shaders) : name{}, moved{false}, sos{}
 {
     name = glCreateProgram();
     if (!name) {
@@ -37,8 +29,7 @@ ShaderProgram::ShaderProgram(std::vector<std::pair<std::string, GLenum>> shaders
     this->link();
 }
 
-ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
-    : name{other.name}, moved{false}, sos{}
+ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept : name{other.name}, moved{false}, sos{}
 {
     other.moved = true;
     for (size_t i = 0; i < other.sos.size(); i++) {
@@ -66,10 +57,7 @@ ShaderProgram::~ShaderProgram()
     }
 }
 
-void ShaderProgram::attatch(ShaderObject const& shader)
-{
-    glAttachShader(name, shader.get_name());
-}
+void ShaderProgram::attatch(ShaderObject const& shader) { glAttachShader(name, shader.get_name()); }
 
 void ShaderProgram::link()
 {
@@ -86,75 +74,61 @@ void ShaderProgram::bind() { glUseProgram(name); }
 
 auto ShaderProgram::get_name() const -> GLuint { return name; }
 
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    float new_val
-)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, float new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniform1f(location, new_val);
 }
 
-template <>
-void ShaderProgram::update_uniform(std::string const& uniform_name, int new_val)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, int new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniform1i(location, new_val);
 }
 
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::mat4 new_val
-)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::mat4 new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(new_val));
 }
 
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::vec2 new_val
-)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::vec2 new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniform2fv(location, 1, glm::value_ptr(new_val));
 }
 
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::vec3 new_val
-)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::vec3 new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniform3fv(location, 1, glm::value_ptr(new_val));
 }
 
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    glm::vec4 new_val
-)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, glm::vec4 new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniform4fv(location, 1, glm::value_ptr(new_val));
 }
-template <>
-void ShaderProgram::update_uniform(
-    std::string const& uniform_name,
-    GLuint new_val
-)
+template <> void ShaderProgram::update_uniform(std::string const& uniform_name, GLuint new_val)
 {
     this->bind();
     GLint location = glGetUniformLocation(name, uniform_name.c_str());
     glUniform1ui(location, new_val);
+}
+
+template <>
+void ShaderProgram::update_uniform_array(
+    std::string const& uniform_name,
+    std::array<std::array<float, 4>, 256> const& val
+)
+{
+    this->bind();
+    GLint location = glGetUniformLocation(name, uniform_name.c_str());
+    glUniform4fv(location, 256, val.data()->data());
 }

@@ -1,9 +1,6 @@
 #include "vao.h"
 
-VertexArrayObject::VertexArrayObject() : name{0}, shader_name{0}, moved{false}
-{
-    glGenVertexArrays(1, &name);
-}
+VertexArrayObject::VertexArrayObject() : name{0}, shader_name{0}, moved{false} { glGenVertexArrays(1, &name); }
 
 VertexArrayObject::VertexArrayObject(VertexArrayObject&& other) noexcept
     : name(other.name), shader_name(other.shader_name), moved(false)
@@ -14,8 +11,7 @@ VertexArrayObject::VertexArrayObject(VertexArrayObject&& other) noexcept
     }
 }
 
-VertexArrayObject& VertexArrayObject::operator=(VertexArrayObject&& other
-) noexcept
+VertexArrayObject& VertexArrayObject::operator=(VertexArrayObject&& other) noexcept
 {
     name = other.name;
     shader_name = other.shader_name;
@@ -34,10 +30,7 @@ VertexArrayObject::~VertexArrayObject()
     }
 }
 
-void VertexArrayObject::attach_shader(ShaderProgram const& shader)
-{
-    shader_name = shader.get_name();
-}
+void VertexArrayObject::attach_shader(ShaderProgram const& shader) { shader_name = shader.get_name(); }
 
 void VertexArrayObject::bind()
 {
@@ -47,11 +40,9 @@ void VertexArrayObject::bind()
     glBindVertexArray(name);
 }
 
-static GLint
-get_attribute_location(GLint shader_name, std::string const& attribute_name)
+static GLint get_attribute_location(GLint shader_name, std::string const& attribute_name)
 {
-    GLint const attrib_location =
-        glGetAttribLocation(shader_name, attribute_name.c_str());
+    GLint const attrib_location = glGetAttribLocation(shader_name, attribute_name.c_str());
     if (attrib_location < 0) {
         std::cout << "vertex attrib '" << attribute_name << "' was not found"
                   << "\n";
@@ -75,8 +66,7 @@ static void attach_buffer_object_impl(
     glBindVertexArray(vao_name);
     glBindBuffer(buffer_bind_target, buffer_name);
 
-    GLint const attrib_location =
-        get_attribute_location(shader_name, attribute_name);
+    GLint const attrib_location = get_attribute_location(shader_name, attribute_name);
     if (integer_type) {
         glVertexAttribIPointer(
             attrib_location, // index
@@ -103,11 +93,7 @@ static void attach_buffer_object_impl(
     }
 }
 
-void VertexArrayObject::attach_buffer_object(
-    std::string const& attribute_name,
-    StaticBuffer& buffer,
-    GLuint divisor
-)
+void VertexArrayObject::attach_buffer_object(std::string const& attribute_name, StaticBuffer& buffer, GLuint divisor)
 {
     attach_buffer_object_impl(
         attribute_name,
@@ -121,11 +107,7 @@ void VertexArrayObject::attach_buffer_object(
         buffer.get_type() == GL_UNSIGNED_INT || buffer.get_type() == GL_INT
     );
 }
-void VertexArrayObject::attach_buffer_object(
-    std::string const& attribute_name,
-    StaticBuffer&& buffer,
-    GLuint divisor
-)
+void VertexArrayObject::attach_buffer_object(std::string const& attribute_name, StaticBuffer&& buffer, GLuint divisor)
 {
     attach_buffer_object_impl(
         attribute_name,
