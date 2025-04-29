@@ -1,3 +1,18 @@
+render1-6 should run somewhat progressively faster
+
+building:
+    make
+    ./render[1-6]
+    ./render[1-6] [filename.vox to render]
+
+I did my best to #include <array>; #include<tuple> where needed. 
+
+The large scene is res/christmas_scene.vox
+    
+This is a list of optimization that I will turn into a more fun presentation! I
+will also chat briefly of different optimizations I did not get to / further
+directions.
+
 scene:
     3,688,048 voxels
 
@@ -63,7 +78,7 @@ render5: do per face instance rendering
 
     16 draw call per frame
 
-render6: eliminate covered triangles
+render6: eliminate covered triangles (culling)
     43.7 fps over 1005 frames
 
     2 triangles
